@@ -47,8 +47,8 @@ class APIControllerTest {
     @BeforeEach
     void setUp() {
         validParams = new HashMap<>();
-        validParams.put("originCountryId", "US");
-        validParams.put("destinationCountryId", "GB");
+        validParams.put("originCountryId", "ID");
+        validParams.put("destinationCountryId", "ID");
         validParams.put("weight", "1.5");
         validParams.put("createdAt", "2024-04-24T12:00:00Z");
         validParams.put("customerId", "123e4567-e89b-12d3-a456-426614174000");
@@ -60,8 +60,8 @@ class APIControllerTest {
     void getNextTrackingNumber_WithValidParams_ReturnsSuccessResponse() throws Exception {
         // Arrange
         TrackingNumberRequest request = TrackingNumberRequest.builder()
-                .originCountryId("US")
-                .destinationCountryId("GB")
+                .originCountryId("ID")
+                .destinationCountryId("ID")
                 .weight(1.5)
                 .createdAt("2024-04-24T12:00:00Z")
                 .customerId("123e4567-e89b-12d3-a456-426614174000")

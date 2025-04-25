@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.times;
@@ -36,8 +37,8 @@ public class TrackingNumberGeneratorImplTest {
     @Before
     public void setUp() {
         validRequest = TrackingNumberRequest.builder()
-                .originCountryId("US")
-                .destinationCountryId("GB")
+                .originCountryId("SG")
+                .destinationCountryId("ID")
                 .weight(1.5)
                 .createdAt("2024-04-24T12:00:00Z")
                 .customerId("123e4567-e89b-12d3-a456-426614174000")
@@ -64,8 +65,8 @@ public class TrackingNumberGeneratorImplTest {
         assertEquals("TL123456789", response.getTrackingNumber());
         assertEquals("2024-04-24T12:00:00Z", response.getGeneratedAt());
         
-        // Verify Redis interaction
-        verify(redisService).setIfNotExists("tracking:TL123456789", "1", 1);
+        // Verify Redis interaction with correct TTL (1 day = 86400 seconds)
+        verify(redisService).setIfNotExists("tracking:TL123456789", "1", 86400);
     }
 
     @Test(expected = NullPointerException.class)
@@ -97,13 +98,14 @@ public class TrackingNumberGeneratorImplTest {
         // Assert
         assertNotNull(response);
         assertEquals("TL987654321", response.getTrackingNumber());
+        assertEquals("2024-04-24T12:00:01Z", response.getGeneratedAt());
         
-        // Verify Redis was called twice
+        // Verify Redis was called twice with correct TTL
         verify(redisService, times(2)).setIfNotExists(anyString(), anyString(), anyInt());
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void generateTrackingNumber_WhenAllRetriesFail_ThrowsException() {
+    @Test
+    public void generateTrackingNumber_WhenAllRetriesFail_ReturnsNull() {
         // Arrange
         when(redisService.setIfNotExists(anyString(), anyString(), anyInt())).thenReturn(false);
         when(snowflakeIdGenerator.nextId("TL"))
@@ -113,6 +115,9 @@ public class TrackingNumberGeneratorImplTest {
                         .build());
 
         // Act
-        trackingNumberGenerator.generateTrackingNumber(validRequest);
+        TrackingNumberResponse response = trackingNumberGenerator.generateTrackingNumber(validRequest);
+
+        // Assert
+        assertNull(response);
     }
 } 

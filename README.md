@@ -29,7 +29,7 @@ The API currently supports the following Southeast Asian countries:
 
 ## Prerequisites
 
-- Java 17 or higher
+- Java 17 or higher (recommend install using sdkman)
 - Gradle 8.5
 - Redis (optional, for tracking number uniqueness)
 
