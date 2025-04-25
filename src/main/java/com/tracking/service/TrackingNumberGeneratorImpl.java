@@ -43,6 +43,9 @@ public class TrackingNumberGeneratorImpl implements TrackingNumberGenerator {
             String key = TRACKING_NUMBER_KEY_PREFIX + trackingNumberId;
             if (redisService.setIfNotExists(key, "1", TRACKING_NUMBER_TTL_DAYS * 24 * 60 * 60)) {
                 log.info("Generated tracking number: {}", trackingNumberId);
+                if (!redisService.isRedisAvailable()) {
+                    log.warn("Redis is not available, tracking number uniqueness is not guaranteed");
+                }
                 return TrackingNumberResponse.builder()
                         .trackingNumber(trackingNumberId)
                         .generatedAt(trackingNumber.getGeneratedAt().toString())
