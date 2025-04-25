@@ -54,6 +54,6 @@ public class TrackingNumberGeneratorImpl implements TrackingNumberGenerator {
         }
 
         log.error("Failed to generate a unique tracking number after {} attempts", maxAttempts);
-        throw new IllegalStateException("Failed to generate a unique tracking number after " + maxAttempts + " attempts");
+        return null;
     }
 } 

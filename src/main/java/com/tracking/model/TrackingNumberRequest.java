@@ -1,7 +1,7 @@
 package com.tracking.model;
 
-import com.tracking.validation.DifferentCountryCodes;
 import com.tracking.validation.KebabCaseSlug;
+import com.tracking.validation.ValidCountryCode;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
@@ -13,15 +13,16 @@ import lombok.Value;
 
 @Value
 @Builder
-@DifferentCountryCodes
 @KebabCaseSlug
 public class TrackingNumberRequest {
     @NotBlank(message = "Origin country ID is required")
     @Pattern(regexp = "^[A-Z]{2}$", message = "Origin country ID must be a valid ISO 3166-1 alpha-2 code")
+    @ValidCountryCode(message = "Origin country code not supported")
     private final String originCountryId;
 
     @NotBlank(message = "Destination country ID is required")
     @Pattern(regexp = "^[A-Z]{2}$", message = "Destination country ID must be a valid ISO 3166-1 alpha-2 code")
+    @ValidCountryCode(message = "Destination country code not supported")
     private final String destinationCountryId;
 
     @NotNull(message = "Weight is required")
