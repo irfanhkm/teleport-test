@@ -5,6 +5,7 @@ import com.tracking.model.TrackingNumberRequest;
 import com.tracking.model.TrackingNumberResponse;
 import com.tracking.service.TrackingNumberGenerator;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 @RestController
 public class APIController {
 
@@ -63,9 +65,11 @@ public class APIController {
             errors.put("error", "Invalid parameter format: " + e.getMessage());
             return ResponseEntity.badRequest().body(errors);
         } catch (Exception e) {
+            log.error("Internal server error: {}", e.getMessage());
+            log.error("Stacktrace: {}", e.getStackTrace());
             return ResponseEntity.status(500).body(Map.of(
                 "error", "Internal server error",
-                "message", e.getMessage()
+                "message", "Internal server error"
             ));
         }
     }
