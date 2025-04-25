@@ -50,7 +50,7 @@ The API currently supports the following Southeast Asian countries:
 ### Generate Tracking Number
 
 ```
-GET /api/tracking/generate
+GET https://teleport-test.onrender.com/tracking-number
 ```
 
 Query Parameters:
@@ -59,21 +59,21 @@ Query Parameters:
 | originCountryId | String | Yes | Origin country code (2 letters) | SG |
 | destinationCountryId | String | Yes | Destination country code (2 letters) | ID |
 | weight | Double | Yes | Package weight in kg | 1.5 |
-| createdAt | String | Yes | Creation timestamp in RFC 3339 format | 2024-03-20T10:00:00+08:00 |
+| createdAt | String | Yes | Creation timestamp in RFC 3339 format | 2024-04-24T12:00:00Z |
 | customerId | String | Yes | Customer UUID | 123e4567-e89b-12d3-a456-426614174000 |
 | customerName | String | Yes | Customer name | John Doe |
 | customerSlug | String | Yes | Customer slug | john-doe |
 
 Example Request:
 ```
-GET /api/tracking/generate?originCountryId=SG&destinationCountryId=ID&weight=1.5&createdAt=2024-03-20T10:00:00%2B08:00&customerId=123e4567-e89b-12d3-a456-426614174000&customerName=John%20Doe&customerSlug=john-doe
+GET https://teleport-test.onrender.com/tracking-number?originCountryId=ID&destinationCountryId=ID&weight=1.5000&createdAt=2024-04-24T12:00:00Z&customerId=123e4567-e89b-12d3-a456-426614174000&customerName=Test%20Customer&customerSlug=test-customer
 ```
 
-Response:
+Example Response:
 ```json
 {
-    "trackingNumber": "TL1234567890",
-    "generatedAt": "2024-03-20T10:00:00+08:00"
+    "tracking_number": "TL5CEIBPMK1C74",
+    "generated_at": "2025-04-25T04:02:49.884Z"
 }
 ```
 
