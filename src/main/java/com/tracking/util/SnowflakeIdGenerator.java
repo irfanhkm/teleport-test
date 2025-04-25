@@ -2,10 +2,9 @@ package com.tracking.util;
 
 import com.tracking.model.TrackingNumber;
 import org.springframework.stereotype.Component;
-import java.net.InetAddress;
 import java.time.Instant;
+import java.util.UUID;
 import lombok.NonNull;
-
 
 @Component
 public class SnowflakeIdGenerator {
@@ -18,7 +17,7 @@ public class SnowflakeIdGenerator {
 
     public SnowflakeIdGenerator() {
         this.epoch = CUSTOM_EPOCH;
-        this.machineId = generateMachineIdFromHostname();
+        this.machineId = generateMachineId();
         this.sequence = 0;
     }
 
@@ -40,13 +39,12 @@ public class SnowflakeIdGenerator {
         return Long.toString(id, 36).toUpperCase(); // Base36 for alphanumeric compactness
     }
 
-    private int generateMachineIdFromHostname() {
-        try {
-            String hostname = InetAddress.getLocalHost().getHostName();
-            int hash = hostname.hashCode(); // Optional: replace with more stable machine ID logic
-            return Math.abs(hash % 1024); // 10-bit machine ID
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to determine machine ID", e);
-        }
+    private int generateMachineId() {
+        // Generate a UUID and use its hash code to get a stable machine ID
+        UUID uuid = UUID.randomUUID();
+        int hash = uuid.hashCode();
+        
+        // Ensure the hash is positive and within 10-bit range (0-1023)
+        return Math.abs(hash) % 1024;
     }
 } 
