@@ -50,11 +50,23 @@ public class APIController {
                 });
                 return ResponseEntity.badRequest().body(errors);
             }
-                    
-            return ResponseEntity.ok(trackingNumberGenerator.generateTrackingNumber(request));
+            
+            TrackingNumberResponse response = trackingNumberGenerator.generateTrackingNumber(request);
+            if (response == null) {
+                return ResponseEntity.status(500).body(Map.of(
+                    "error", "Failed to generate tracking number",
+                    "message", "The tracking number generator service unavailable, please try again later"
+                ));
+            }
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             errors.put("error", "Invalid parameter format: " + e.getMessage());
             return ResponseEntity.badRequest().body(errors);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "Internal server error",
+                "message", e.getMessage()
+            ));
         }
     }
 

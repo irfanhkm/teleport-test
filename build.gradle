@@ -16,6 +16,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'redis.clients:jedis:5.1.0'
     
     // Validation dependencies
     implementation 'javax.validation:validation-api:2.0.1.Final'
