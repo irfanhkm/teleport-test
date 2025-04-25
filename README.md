@@ -1,36 +1,110 @@
-# Spring Boot Demo
+# Tracking Number Generation Services
 
-This is a simple Spring Boot application created with Gradle.
+A service that generates unique tracking numbers for shipments, with validation for Southeast Asian countries.
+
+## Features
+
+- Generates unique tracking numbers using Snowflake algorithm
+- Validates origin and destination country codes (Southeast Asia only)
+- Redis integration for tracking number uniqueness
+- Graceful fallback when Redis is unavailable
+
+## Supported Countries
+
+The API currently supports the following Southeast Asian countries:
+
+| Country Code | Country Name |
+|-------------|--------------|
+| BN          | Brunei       |
+| KH          | Cambodia     |
+| ID          | Indonesia    |
+| LA          | Laos         |
+| MY          | Malaysia     |
+| MM          | Myanmar      |
+| PH          | Philippines  |
+| SG          | Singapore    |
+| TH          | Thailand     |
+| TL          | Timor-Leste  |
+| VN          | Vietnam      |
 
 ## Prerequisites
 
 - Java 17 or higher
-- Gradle 7.0 or higher
+- Gradle 8.5
+- Redis (optional, for tracking number uniqueness)
 
-## Running the Application
+## Getting Started
 
-To run the application, use the following command:
+1. Clone the repository
+2. Build the project:
+   ```bash
+   ./gradlew build
+   ```
+3. Run the application:
+   ```bash
+   ./gradlew bootRun
+   ```
 
-```bash
-./gradlew bootRun
+## API Endpoints
+
+### Generate Tracking Number
+
+```
+GET /api/tracking/generate
 ```
 
-The application will start on port 5678. You can access it at http://localhost:5678.
+Query Parameters:
+| Parameter | Type | Required | Description | Example |
+|-----------|------|----------|-------------|---------|
+| originCountryId | String | Yes | Origin country code (2 letters) | SG |
+| destinationCountryId | String | Yes | Destination country code (2 letters) | ID |
+| weight | Double | Yes | Package weight in kg | 1.5 |
+| createdAt | String | Yes | Creation timestamp in RFC 3339 format | 2024-03-20T10:00:00+08:00 |
+| customerId | String | Yes | Customer UUID | 123e4567-e89b-12d3-a456-426614174000 |
+| customerName | String | Yes | Customer name | John Doe |
+| customerSlug | String | Yes | Customer slug | john-doe |
 
-## Building the Application
-
-To build the application, use the following command:
-
-```bash
-./gradlew build
+Example Request:
+```
+GET /api/tracking/generate?originCountryId=SG&destinationCountryId=ID&weight=1.5&createdAt=2024-03-20T10:00:00%2B08:00&customerId=123e4567-e89b-12d3-a456-426614174000&customerName=John%20Doe&customerSlug=john-doe
 ```
 
-This will create a JAR file in the `build/libs` directory.
+Response:
+```json
+{
+    "trackingNumber": "TL1234567890",
+    "generatedAt": "2024-03-20T10:00:00+08:00"
+}
+```
 
-## Testing the Application
+## Validation Rules
 
-To run the tests, use the following command:
+- Origin and destination country codes must be valid Southeast Asian country codes
+- Weight must be between 0.001 and 999.999 kg
+- Created at timestamp must be in RFC 3339 format
+- Customer ID must be a valid UUID
+- Customer name and slug must be between 1 and 100 characters
 
+## Error Handling
+
+The API returns appropriate HTTP status codes and error messages:
+
+- 400 Bad Request: Invalid input data
+- 500 Internal Server Error: Server-side errors
+
+## Configuration
+
+The application can be configured through `application.properties`:
+
+```properties
+# Redis Configuration (optional)
+spring.data.redis.host=localhost
+spring.data.redis.port=6379
+```
+
+## Testing
+
+Run the tests with:
 ```bash
 ./gradlew test
-``` 
+```
